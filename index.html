@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>فاتورة - AL RAYYAN OPTICS</title>
+    <style>
+      :root {
+        --accent: #123f6b;
+        --muted: #666;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: "Arial", "Noto Naskh Arabic", sans-serif;
+        background: #fafafa;
+        color: #111;
+      }
+      .page {
+        max-width: 900px;
+        margin: 5px auto;
+        background: #fff;
+        padding: 5px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-direction: row-reverse;
+      }
+      .company {
+        max-width: 42%;
+        text-align: left;
+      }
+      .company h1 {
+        margin: 0;
+        font-size: 20px;
+        color: var(--accent);
+      }
+      .company p {
+        margin: 3px 0;
+        color: var(--muted);
+      }
+      .logo {
+        width: 150px;
+        text-align: center;
+      }
+      .logo .circle {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        border: 6px solid var(--accent);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo .circle b {
+        display: block;
+        font-size: 16px;
+      }
+      .meta {
+        max-width: 40%;
+        text-align: left;
+      }
+      .meta label {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .meta .value {
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      hr.sep {
+        border: none;
+        border-top: 2px solid #eee;
+        margin: 18px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead th {
+        background: #f2f6fb;
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-weight: 700;
+        color: #222;
+      }
+      tbody td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        vertical-align: top;
+      }
+      td.center {
+        text-align: center;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin: 14px 0;
+      }
+      button {
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        background: #fff;
+      }
+      button.primary {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .totals {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+      }
+      .totals .box {
+        min-width: 300px;
+      }
+      .totals .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 10px;
+        border-top: 1px solid #eee;
+      }
+      [contenteditable] {
+        outline: 2px dashed transparent;
+        padding: 2px;
+      }
+      [contenteditable]:focus {
+        outline: 2px dashed #b3d4ff;
+        background: #fff;
+      }
+      #itemsTable > thead > tr > th:nth-child(2){
+        width: 40%;
+      }
+      @media print {
+        body {
+          background: #fff;
+        }
+        .page {
+          box-shadow: none;
+          margin: 0;
+          max-width: 100%;
+          padding: 0;
+        }
+        .actions,
+        .no-print {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page" id="invoicePage">
+      <header>
+        <div class="company">
+          <h1 contenteditable="true">AL RAYYAN OPTICS W.L.L</h1>
+          <p contenteditable="true">Al-Shafi Street, New Rayyan, Qatar</p>
+          <p contenteditable="true">Telephone : +974 4119160</p>
+          <p contenteditable="true">E-mail : alrayyanoptics@qatar.net.qa</p>
+        </div>
+        <div class="logo">
+          <!-- <div class="circle">
+          <div contenteditable="true" style="text-align:center">
+            <b>AL RAYYAN</b>
+            <div style="font-size:12px">OPTICS</div>
+          </div>
+        </div> -->
+          <div style="font-weight: 900;text-align: left; font-size: larger;">فاتورة Invoice </div>
+        </div>
+        <div class="meta" style="text-align: left">
+          <label>.Invoice No</label>
+          <div class="value" contenteditable="true" id="invoiceNo">0000</div>
+          <label>:Date</label>
+          <div class="value" contenteditable="true" id="invoiceDate">
+            2025-09-11
+          </div>
+        </div>
+      </header>
+      <hr class="sep" />
+      <div class="actions no-print">
+        <button onclick="addRow()">add item</button>
+        <button onclick="removeSelected()">remove selected</button>
+        <button onclick="clearTable()">clear</button>
+        <button class="primary" onclick="window.print()">
+            Print / Save PDF
+        </button>
+      </div>
+      <table id="itemsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الوصف Description</th>
+            <th>الكمية Qty</th>
+            <th>السعر Price</th>
+            <th>الوحدة Unit</th>
+            <th>خصم % Discount</th>
+            <th>المبلغ Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr>
+            <td class="center">1</td>
+            <td contenteditable="true">نظارة طبية</td>
+            <td contenteditable="true" class="center" oninput="recalculate()">
+              1
+            </td>
+            <td contenteditable="true" class="center" oninput="recalculate()">
+              120.00
+            </td>
+            <td contenteditable="true" class="center">pcs</td>
+            <td contenteditable="true" class="center" oninput="recalculate()">
+              0
+            </td>
+            <td class="center amount">120.00</td>
+          </tr> -->
+        </tbody>
+      </table>
+      <div class="totals">
+        <div class="box">
+          <div class="row">
+            <div>Subtotal</div>
+            <div id="subtotal">120.00</div>
+          </div>
+          <div class="row">
+            <div>Tax %</div>
+            <div contenteditable="true" id="taxPercent" oninput="recalculate()">
+              0
+            </div>
+          </div>
+          <div class="row">
+            <div>Tax Amount</div>
+            <div id="taxAmount">0.00</div>
+          </div>
+          <div class="row" style="font-weight: 700">
+            <div>Total</div>
+            <div id="totalAmount">120.00</div>
+          </div>
+        </div>
+      </div>
+      <div
+        style="
+          margin-top: 28px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <div>Authorised Signatory</div>
+        <div id="totalInWords">
+          Total (in words): One hundred twenty QAR only
+        </div>
+      </div>
+    </div>
+    <script>
+      function numberToWords(num) {
+        const ones = [
+          "",
+          "one",
+          "two",
+          "three",
+          "four",
+          "five",
+          "six",
+          "seven",
+          "eight",
+          "nine",
+          "ten",
+          "eleven",
+          "twelve",
+          "thirteen",
+          "fourteen",
+          "fifteen",
+          "sixteen",
+          "seventeen",
+          "eighteen",
+          "nineteen",
+        ];
+        const tens = [
+          "",
+          "",
+          "twenty",
+          "thirty",
+          "forty",
+          "fifty",
+          "sixty",
+          "seventy",
+          "eighty",
+          "ninety",
+        ];
+        if (num === 0) return "zero";
+        if (num < 20) return ones[num];
+        if (num < 100)
+          return (
+            tens[Math.floor(num / 10)] + (num % 10 ? " " + ones[num % 10] : "")
+          );
+        if (num < 1000)
+          return (
+            ones[Math.floor(num / 100)] +
+            " hundred" +
+            (num % 100 ? " " + numberToWords(num % 100) : "")
+          );
+        if (num < 1000000)
+          return (
+            numberToWords(Math.floor(num / 1000)) +
+            " thousand" +
+            (num % 1000 ? " " + numberToWords(num % 1000) : "")
+          );
+        return num.toString();
+      }
+      function recalculate() {
+        const tbody = document.querySelector("#itemsTable tbody");
+        let subtotal = 0;
+        Array.from(tbody.rows).forEach((row, idx) => {
+          const qty = parseFloat(row.cells[2].textContent) || 0;
+          const rate = parseFloat(row.cells[3].textContent) || 0;
+          const disc = parseFloat(row.cells[5].textContent) || 0;
+          const raw = qty * rate;
+          const discounted = raw - raw * (disc / 100);
+          const finalAmt =
+            Math.round((discounted + Number.EPSILON) * 100) / 100;
+          row.cells[6].textContent = finalAmt.toFixed(2);
+          subtotal += finalAmt;
+          row.cells[0].textContent = idx + 1;
+        });
+        document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+        const taxPercent =
+          parseFloat(document.getElementById("taxPercent").textContent) || 0;
+        const taxAmount =
+          Math.round((subtotal * (taxPercent / 100) + Number.EPSILON) * 100) /
+          100;
+        document.getElementById("taxAmount").textContent = taxAmount.toFixed(2);
+        const total = subtotal + taxAmount;
+        document.getElementById("totalAmount").textContent = total.toFixed(2);
+        const words = numberToWords(Math.floor(total));
+        document.getElementById("totalInWords").textContent =
+          "Total (in words): " + words + " QAR only";
+      }
+      function addRow() {
+        const tbody = document.querySelector("#itemsTable tbody");
+        const row = tbody.insertRow();
+        row.insertCell(0).className = "center";
+        row.insertCell(1).setAttribute("contenteditable", "true");
+        row.insertCell(2).setAttribute("contenteditable", "true");
+        row.insertCell(3).setAttribute("contenteditable", "true");
+        row.insertCell(4).setAttribute("contenteditable", "true");
+        row.insertCell(5).setAttribute("contenteditable", "true");
+        row.insertCell(6).className = "center amount";
+        row.cells[0].textContent = tbody.rows.length;
+        row.cells[1].textContent = "";
+        row.cells[2].textContent = "";
+        row.cells[3].textContent = "";
+        row.cells[4].textContent = "pcs";
+        row.cells[5].textContent = "0";
+        row.cells[6].textContent = "0.00";
+        row.cells[2].oninput = recalculate;
+        row.cells[3].oninput = recalculate;
+        row.cells[5].oninput = recalculate;
+        row.addEventListener("click", () => {
+          row.classList.toggle("selected");
+          row.style.background = row.classList.contains("selected")
+            ? "#f0f8ff"
+            : "";
+        });
+        recalculate();
+      }
+      function removeSelected() {
+        const tbody = document.querySelector("#itemsTable tbody");
+        Array.from(tbody.querySelectorAll("tr.selected")).forEach((r) =>
+          r.remove()
+        );
+        recalculate();
+      }
+      function clearTable() {
+        const tbody = document.querySelector("#itemsTable tbody");
+        tbody.innerHTML = "";
+        recalculate();
+      }
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("#itemsTable tbody tr")) {
+          const tr = e.target.closest("tr");
+          if (!e.target.isContentEditable) {
+            tr.classList.toggle("selected");
+            tr.style.background = tr.classList.contains("selected")
+              ? "#f0f8ff"
+              : "";
+          }
+        }
+      });
+      recalculate();
+    </script>
+  </body>
+</html>
