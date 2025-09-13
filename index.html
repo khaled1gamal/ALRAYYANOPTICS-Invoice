@@ -137,7 +137,7 @@
         outline: 2px dashed #b3d4ff;
         background: #fff;
       }
-      #itemsTable > thead > tr > th:nth-child(2){
+      #itemsTable > thead > tr > th:nth-child(2) {
         width: 40%;
       }
       @media print {
@@ -173,7 +173,9 @@
             <div style="font-size:12px">OPTICS</div>
           </div>
         </div> -->
-          <div style="font-weight: 900;text-align: left; font-size: larger;">فاتورة Invoice </div>
+          <div style="font-weight: 900; text-align: left; font-size: larger">
+            فاتورة Invoice
+          </div>
         </div>
         <div class="meta" style="text-align: left">
           <label>.Invoice No</label>
@@ -185,13 +187,20 @@
         </div>
       </header>
       <hr class="sep" />
+      <div class="no-print"></div>
       <div class="actions no-print">
         <button onclick="addRow()">add item</button>
         <button onclick="removeSelected()">remove selected</button>
         <button onclick="clearTable()">clear</button>
-        <button class="primary" onclick="window.print()">
-            Print / Save PDF
+        <button class="primary" onclick="securePrint()">
+          Print / Save PDF
         </button>
+        <input
+          type="password"
+          id="printPassword"
+          placeholder="Print Password"
+          style="padding: 6px; border-radius: 6px; border: 1px solid #ccc"
+        />
       </div>
       <table id="itemsTable">
         <thead>
@@ -260,6 +269,7 @@
       </div>
     </div>
     <script>
+      const PRINT_CODE = "1234"; // الرمز السري للطباعة
       function numberToWords(num) {
         const ones = [
           "",
@@ -343,6 +353,15 @@
         document.getElementById("totalInWords").textContent =
           "Total (in words): " + words + " QAR only";
       }
+
+      function securePrint() {
+        const entered = document.getElementById("printPassword").value.trim();
+        if (entered === PRINT_CODE) {
+          window.print();
+        } else {
+          alert("Invalid Print Password 🙁!");
+        }
+      }
       function addRow() {
         const tbody = document.querySelector("#itemsTable tbody");
         const row = tbody.insertRow();
@@ -395,7 +414,12 @@
         }
       });
       recalculate();
+      window.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
+          e.preventDefault();
+          alert("Please use the print button instead 🙁🙁🙁 .");
+        }
+      });
     </script>
   </body>
 </html>
-
