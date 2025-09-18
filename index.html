@@ -140,21 +140,7 @@
       #itemsTable > thead > tr > th:nth-child(2) {
         width: 40%;
       }
-      @media print {
-        body {
-          background: #fff;
-        }
-        .page {
-          box-shadow: none;
-          margin: 0;
-          max-width: 100%;
-          padding: 0;
-        }
-        .actions,
-        .no-print {
-          display: none;
-        }
-      }
+     
        @media (max-width: 600px) {
         .page {
           padding: 6px;
@@ -202,6 +188,21 @@
           font-size: 13px;
           text-align: center;
           margin-top: 10px;
+        }
+      }
+       @media print {
+        body {
+          background: #fff;
+        }
+        .page {
+          box-shadow: none;
+          margin: 0;
+          max-width: 100%;
+          padding: 0;
+        }
+        .actions,
+        .no-print {
+          display: none;
         }
       }
     </style>
@@ -472,6 +473,7 @@
     </script>
   </body>
 </html>
+
 
 
 
