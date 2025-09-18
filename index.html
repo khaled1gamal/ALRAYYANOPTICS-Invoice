@@ -47,19 +47,6 @@
         width: 150px;
         text-align: center;
       }
-      .logo .circle {
-        width: 110px;
-        height: 110px;
-        border-radius: 50%;
-        border: 6px solid var(--accent);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .logo .circle b {
-        display: block;
-        font-size: 16px;
-      }
       .meta {
         max-width: 40%;
         text-align: left;
@@ -78,9 +65,14 @@
         border-top: 2px solid #eee;
         margin: 18px 0;
       }
+      .table-container {
+        width: 100%;
+        overflow-x: auto; /* التمرير الأفقي */
+      }
       table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 700px; /* يضمن وجود تمرير عند الشاشات الضيقة */
       }
       thead th {
         background: #f2f6fb;
@@ -102,6 +94,7 @@
         gap: 8px;
         justify-content: flex-end;
         margin: 14px 0;
+        flex-wrap: wrap;
       }
       button {
         cursor: pointer;
@@ -140,57 +133,7 @@
       #itemsTable > thead > tr > th:nth-child(2) {
         width: 40%;
       }
-     
-       @media (max-width: 600px) {
-        .page {
-          padding: 6px;
-        }
-        .company h1 {
-          font-size: 16px;
-        }
-        table,
-        thead,
-        tbody,
-        th,
-        td,
-        tr {
-          display: block;
-        }
-        thead {
-          display: none;
-        }
-        tbody tr {
-          margin-bottom: 12px;
-          border: 1px solid #ddd;
-          padding: 6px;
-          border-radius: 6px;
-          background: #fafafa;
-        }
-        tbody td {
-          border: none;
-          padding: 4px 6px;
-          display: flex;
-          justify-content: space-between;
-        }
-        tbody td::before {
-          content: attr(data-label);
-          font-weight: bold;
-          color: var(--accent);
-        }
-        .actions {
-          flex-direction: column;
-          align-items: stretch;
-        }
-        .totals {
-          justify-content: center;
-        }
-        #totalInWords {
-          font-size: 13px;
-          text-align: center;
-          margin-top: 10px;
-        }
-      }
-       @media print {
+      @media print {
         body {
           background: #fff;
         }
@@ -216,265 +159,136 @@
           <p contenteditable="true">Telephone : +974 44119160</p>
           <p contenteditable="true">E-mail : alrayyanoptics@qatar.net.qa</p>
         </div>
-        <div class="logo">
-          <!-- <div class="circle">
-          <div contenteditable="true" style="text-align:center">
-            <b>AL RAYYAN</b>
-            <div style="font-size:12px">OPTICS</div>
-          </div>
-        </div> -->
-          <div style="font-weight: 900; text-align: left; font-size: larger">
-            فاتورة Invoice
-          </div>
-        </div>
-        <div class="meta" style="text-align: left">
+        <div class="logo">فاتورة Invoice</div>
+        <div class="meta">
           <label>.Invoice No</label>
           <div class="value" contenteditable="true" id="invoiceNo">0000</div>
           <label>:Date</label>
-          <div class="value" contenteditable="true" id="invoiceDate">
-            2025-09-11
-          </div>
+          <div class="value" contenteditable="true" id="invoiceDate">2025-09-11</div>
         </div>
       </header>
       <hr class="sep" />
-      <div class="no-print"></div>
       <div class="actions no-print">
         <button onclick="addRow()">add item</button>
         <button onclick="removeSelected()">remove selected</button>
         <button onclick="clearTable()">clear</button>
-        <button class="primary" onclick="securePrint()">
-          Print / Save PDF
-        </button>
-        <input
-          type="password"
-          id="printPassword"
-          placeholder="Print Password"
-          style="padding: 6px; border-radius: 6px; border: 1px solid #ccc"
-        />
+        <button class="primary" onclick="securePrint()">Print / Save PDF</button>
+        <input type="password" id="printPassword" placeholder="Print Password" style="padding:6px;border-radius:6px;border:1px solid #ccc" />
       </div>
-      <table id="itemsTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>الوصف Description</th>
-            <th>الكمية Qty</th>
-            <th>السعر Price</th>
-            <th>الوحدة Unit</th>
-            <th>خصم % Discount</th>
-            <th>المبلغ Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- <tr>
-            <td class="center">1</td>
-            <td contenteditable="true">نظارة طبية</td>
-            <td contenteditable="true" class="center" oninput="recalculate()">
-              1
-            </td>
-            <td contenteditable="true" class="center" oninput="recalculate()">
-              120.00
-            </td>
-            <td contenteditable="true" class="center">pcs</td>
-            <td contenteditable="true" class="center" oninput="recalculate()">
-              0
-            </td>
-            <td class="center amount">120.00</td>
-          </tr> -->
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table id="itemsTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الوصف Description</th>
+              <th>الكمية Qty</th>
+              <th>السعر Price</th>
+              <th>الوحدة Unit</th>
+              <th>خصم % Discount</th>
+              <th>المبلغ Amount</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <div class="totals">
         <div class="box">
-          <div class="row">
-            <div>Subtotal</div>
-            <div id="subtotal">120.00</div>
-          </div>
+          <div class="row"><div>Subtotal</div><div id="subtotal">0.00</div></div>
           <div class="row">
             <div>Tax %</div>
-            <div contenteditable="true" id="taxPercent" oninput="recalculate()">
-              0
-            </div>
+            <div contenteditable="true" id="taxPercent" oninput="recalculate()">0</div>
           </div>
-          <div class="row">
-            <div>Tax Amount</div>
-            <div id="taxAmount">0.00</div>
-          </div>
-          <div class="row" style="font-weight: 700">
-            <div>Total</div>
-            <div id="totalAmount">120.00</div>
-          </div>
+          <div class="row"><div>Tax Amount</div><div id="taxAmount">0.00</div></div>
+          <div class="row" style="font-weight:700"><div>Total</div><div id="totalAmount">0.00</div></div>
         </div>
       </div>
-      <div
-        style="
-          margin-top: 28px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        "
-      >
+      <div style="margin-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;">
         <div>Authorised Signatory</div>
-        <div id="totalInWords">
-          Total (in words): One hundred twenty QAR only
-        </div>
+        <div id="totalInWords">Total (in words): Zero QAR only</div>
       </div>
     </div>
     <script>
-      const PRINT_CODE = "2365410"; // الرمز السري للطباعة
-      function numberToWords(num) {
-        const ones = [
-          "",
-          "one",
-          "two",
-          "three",
-          "four",
-          "five",
-          "six",
-          "seven",
-          "eight",
-          "nine",
-          "ten",
-          "eleven",
-          "twelve",
-          "thirteen",
-          "fourteen",
-          "fifteen",
-          "sixteen",
-          "seventeen",
-          "eighteen",
-          "nineteen",
-        ];
-        const tens = [
-          "",
-          "",
-          "twenty",
-          "thirty",
-          "forty",
-          "fifty",
-          "sixty",
-          "seventy",
-          "eighty",
-          "ninety",
-        ];
-        if (num === 0) return "zero";
-        if (num < 20) return ones[num];
-        if (num < 100)
-          return (
-            tens[Math.floor(num / 10)] + (num % 10 ? " " + ones[num % 10] : "")
-          );
-        if (num < 1000)
-          return (
-            ones[Math.floor(num / 100)] +
-            " hundred" +
-            (num % 100 ? " " + numberToWords(num % 100) : "")
-          );
-        if (num < 1000000)
-          return (
-            numberToWords(Math.floor(num / 1000)) +
-            " thousand" +
-            (num % 1000 ? " " + numberToWords(num % 1000) : "")
-          );
+      const PRINT_CODE = "2365410";
+      function numberToWords(num){
+        const ones=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
+        const tens=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
+        if(num===0)return"zero";
+        if(num<20)return ones[num];
+        if(num<100)return tens[Math.floor(num/10)]+(num%10?" "+ones[num%10]:"");
+        if(num<1000)return ones[Math.floor(num/100)]+" hundred"+(num%100?" "+numberToWords(num%100):"");
+        if(num<1000000)return numberToWords(Math.floor(num/1000))+" thousand"+(num%1000?" "+numberToWords(num%1000):"");
         return num.toString();
       }
-      function recalculate() {
-        const tbody = document.querySelector("#itemsTable tbody");
-        let subtotal = 0;
-        Array.from(tbody.rows).forEach((row, idx) => {
-          const qty = parseFloat(row.cells[2].textContent) || 0;
-          const rate = parseFloat(row.cells[3].textContent) || 0;
-          const disc = parseFloat(row.cells[5].textContent) || 0;
-          const raw = qty * rate;
-          const discounted = raw - raw * (disc / 100);
-          const finalAmt =
-            Math.round((discounted + Number.EPSILON) * 100) / 100;
-          row.cells[6].textContent = finalAmt.toFixed(2);
-          subtotal += finalAmt;
-          row.cells[0].textContent = idx + 1;
+      function recalculate(){
+        const tbody=document.querySelector("#itemsTable tbody");
+        let subtotal=0;
+        Array.from(tbody.rows).forEach((row,idx)=>{
+          const qty=parseFloat(row.cells[2].textContent)||0;
+          const rate=parseFloat(row.cells[3].textContent)||0;
+          const disc=parseFloat(row.cells[5].textContent)||0;
+          const raw=qty*rate;
+          const discounted=raw-raw*(disc/100);
+          const finalAmt=Math.round((discounted+Number.EPSILON)*100)/100;
+          row.cells[6].textContent=finalAmt.toFixed(2);
+          subtotal+=finalAmt;
+          row.cells[0].textContent=idx+1;
         });
-        document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-        const taxPercent =
-          parseFloat(document.getElementById("taxPercent").textContent) || 0;
-        const taxAmount =
-          Math.round((subtotal * (taxPercent / 100) + Number.EPSILON) * 100) /
-          100;
-        document.getElementById("taxAmount").textContent = taxAmount.toFixed(2);
-        const total = subtotal + taxAmount;
-        document.getElementById("totalAmount").textContent = total.toFixed(2);
-        const words = numberToWords(Math.floor(total));
-        document.getElementById("totalInWords").textContent =
-          "Total (in words): " + words + " QAR only";
+        document.getElementById("subtotal").textContent=subtotal.toFixed(2);
+        const taxPercent=parseFloat(document.getElementById("taxPercent").textContent)||0;
+        const taxAmount=Math.round((subtotal*(taxPercent/100)+Number.EPSILON)*100)/100;
+        document.getElementById("taxAmount").textContent=taxAmount.toFixed(2);
+        const total=subtotal+taxAmount;
+        document.getElementById("totalAmount").textContent=total.toFixed(2);
+        document.getElementById("totalInWords").textContent="Total (in words): "+numberToWords(Math.floor(total))+" QAR only";
       }
-
-      function securePrint() {
-        const entered = document.getElementById("printPassword").value.trim();
-        if (entered === PRINT_CODE) {
-          window.print();
-        } else {
-          alert("Invalid Print Password 🙁!");
-        }
+      function securePrint(){
+        const entered=document.getElementById("printPassword").value.trim();
+        if(entered===PRINT_CODE)window.print();
+        else alert("Invalid Print Password 🙁!");
       }
-      function addRow() {
-        const tbody = document.querySelector("#itemsTable tbody");
-        const row = tbody.insertRow();
-        row.insertCell(0).className = "center";
-        row.insertCell(1).setAttribute("contenteditable", "true");
-        row.insertCell(2).setAttribute("contenteditable", "true");
-        row.insertCell(3).setAttribute("contenteditable", "true");
-        row.insertCell(4).setAttribute("contenteditable", "true");
-        row.insertCell(5).setAttribute("contenteditable", "true");
-        row.insertCell(6).className = "center amount";
-        row.cells[0].textContent = tbody.rows.length;
-        row.cells[1].textContent = "";
-        row.cells[2].textContent = "";
-        row.cells[3].textContent = "";
-        row.cells[4].textContent = "pcs";
-        row.cells[5].textContent = "0";
-        row.cells[6].textContent = "0.00";
-        row.cells[2].oninput = recalculate;
-        row.cells[3].oninput = recalculate;
-        row.cells[5].oninput = recalculate;
-        row.addEventListener("click", () => {
+      function addRow(){
+        const tbody=document.querySelector("#itemsTable tbody");
+        const row=tbody.insertRow();
+        row.insertCell(0).className="center";
+        row.insertCell(1).setAttribute("contenteditable","true");
+        row.insertCell(2).setAttribute("contenteditable","true");
+        row.insertCell(3).setAttribute("contenteditable","true");
+        row.insertCell(4).setAttribute("contenteditable","true");
+        row.insertCell(5).setAttribute("contenteditable","true");
+        row.insertCell(6).className="center amount";
+        row.cells[0].textContent=tbody.rows.length;
+        row.cells[1].textContent="";
+        row.cells[2].textContent="";
+        row.cells[3].textContent="";
+        row.cells[4].textContent="pcs";
+        row.cells[5].textContent="0";
+        row.cells[6].textContent="0.00";
+        row.cells[2].oninput=recalculate;
+        row.cells[3].oninput=recalculate;
+        row.cells[5].oninput=recalculate;
+        row.addEventListener("click",()=>{
           row.classList.toggle("selected");
-          row.style.background = row.classList.contains("selected")
-            ? "#d1d1d2"
-            : "";
+          row.style.background=row.classList.contains("selected")?"#d1d1d2":"";
         });
         recalculate();
       }
-      function removeSelected() {
-        const tbody = document.querySelector("#itemsTable tbody");
-        Array.from(tbody.querySelectorAll("tr.selected")).forEach((r) =>
-          r.remove()
-        );
+      function removeSelected(){
+        const tbody=document.querySelector("#itemsTable tbody");
+        Array.from(tbody.querySelectorAll("tr.selected")).forEach(r=>r.remove());
         recalculate();
       }
-      function clearTable() {
-        const tbody = document.querySelector("#itemsTable tbody");
-        tbody.innerHTML = "";
+      function clearTable(){
+        const tbody=document.querySelector("#itemsTable tbody");
+        tbody.innerHTML="";
         recalculate();
       }
-      document.addEventListener("click", (e) => {
-        if (e.target.closest("#itemsTable tbody tr")) {
-          const tr = e.target.closest("tr");
-          if (!e.target.isContentEditable) {
-            tr.classList.toggle("selected");
-            tr.style.background = tr.classList.contains("selected")
-              ? "#f0f8ff"
-              : "";
-          }
-        }
-      });
       recalculate();
-      window.addEventListener("keydown", function (e) {
-        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
+      window.addEventListener("keydown",e=>{
+        if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="p"){
           e.preventDefault();
-          alert("Please use the print button instead 🙁🙁🙁 .");
+          alert("Please use the print button instead 🙁🙁🙁.");
         }
       });
     </script>
   </body>
 </html>
-
-
-
-
-
