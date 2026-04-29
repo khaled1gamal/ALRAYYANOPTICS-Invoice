@@ -84,6 +84,7 @@
       tbody td {
         border: 1px solid #ddd;
         padding: 8px;
+        vertical-align: top;
       }
       td.center {
         text-align: center;
@@ -132,6 +133,32 @@
       #itemsTable > thead > tr > th:nth-child(2) {
         width: 40%;
       }
+      .exam-image-section {
+        margin-top: 24px;
+      }
+      .exam-image-section h3 {
+        margin: 0 0 10px;
+        color: var(--accent);
+        font-size: 18px;
+      }
+      .exam-image-frame {
+        min-height: 120px;
+        border: 1px dashed #c7d5e6;
+        border-radius: 10px;
+        padding: 12px;
+        background: #f8fbff;
+      }
+      .exam-image-frame img {
+        max-width: 100%;
+        max-height: 320px;
+        display: block;
+        margin: 0 auto;
+        object-fit: contain;
+      }
+      .exam-image-placeholder {
+        color: var(--muted);
+        text-align: center;
+      }
       @media print {
         body {
           background: #fff;
@@ -165,11 +192,13 @@
           <label>:Date</label>
           <div class="value" contenteditable="true" id="invoiceDate">2025-09-11</div>
           <label>Customer Name</label>
-          <div class="value" contenteditable="true" id="customerName">....</div>
+          <div class="value" contenteditable="true" id="customerName">...</div>
         </div>
       </header>
       <hr class="sep" />
       <div class="actions no-print">
+        <button type="button" onclick="openImagePicker()">Add Image</button>
+        <input type="file" id="examImageInput" accept="image/*" style="display:none" onchange="handleExamImage(event)" />
         <button onclick="addRow()">add item</button>
         <button onclick="removeSelected()">remove selected</button>
         <button onclick="clearTable()">clear</button>
@@ -201,6 +230,13 @@
           </div>
           <div class="row"><div>Tax Amount</div><div id="taxAmount">0.00</div></div>
           <div class="row" style="font-weight:700"><div>Total</div><div id="totalAmount">0.00</div></div>
+        </div>
+      </div>
+      <div class="exam-image-section">
+        <h3>الوصفه الطيبة Description</h3>
+        <div class="exam-image-frame">
+          <div id="examImagePlaceholder" class="exam-image-placeholder">لم يتم إضافة صورة بعد </div>
+          <img id="examImagePreview" alt="صورة الفحص" style="display:none" />
         </div>
       </div>
       <div style="margin-top:20px;display:flex;justify-content:space-between;flex-wrap:wrap;">
@@ -246,6 +282,22 @@
         const entered=document.getElementById("printPassword").value.trim();
         if(entered===PRINT_CODE)window.print();
         else alert("Invalid Print Password 🙁!");
+      }
+      function openImagePicker(){
+        document.getElementById("examImageInput").click();
+      }
+      function handleExamImage(event){
+        const file=event.target.files&&event.target.files[0];
+        if(!file)return;
+        const reader=new FileReader();
+        reader.onload=function(loadEvent){
+          const preview=document.getElementById("examImagePreview");
+          const placeholder=document.getElementById("examImagePlaceholder");
+          preview.src=loadEvent.target.result;
+          preview.style.display="block";
+          placeholder.style.display="none";
+        };
+        reader.readAsDataURL(file);
       }
       function addRow(){
         const tbody=document.querySelector("#itemsTable tbody");
@@ -293,5 +345,3 @@
     </script>
   </body>
 </html>
-
-
