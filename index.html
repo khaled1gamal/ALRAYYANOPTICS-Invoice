@@ -60,6 +60,16 @@
         font-weight: 700;
         margin-bottom: 6px;
       }
+      .date-input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 6px 8px;
+        background: #fff;
+        font: inherit;
+        color: inherit;
+      }
       hr.sep {
         border: none;
         border-top: 2px solid #eee;
@@ -173,6 +183,12 @@
         .no-print {
           display: none;
         }
+        .date-input {
+          border: none;
+          border-radius: 0;
+          padding: 0;
+          background: transparent;
+        }
       }
     </style>
   </head>
@@ -190,7 +206,7 @@
           <label>.Invoice No</label>
           <div class="value" contenteditable="true" id="invoiceNo">0000</div>
           <label>:Date</label>
-          <div class="value" contenteditable="true" id="invoiceDate">2025-09-11</div>
+          <input type="date" class="value date-input" id="invoiceDate" />
           <label>Customer Name</label>
           <div class="value" contenteditable="true" id="customerName">...</div>
         </div>
@@ -246,6 +262,19 @@
     </div>
     <script>
       const PRINT_CODE = "2365410";
+      // Hide exam-image-section if no image when printing
+      window.onbeforeprint = function() {
+        const preview = document.getElementById("examImagePreview");
+        const section = document.querySelector(".exam-image-section");
+        if (preview.style.display === "none" || !preview.src || preview.src === "") {
+          section.style.display = "none";
+        }
+      };
+      // Restore section after printing
+      window.onafterprint = function() {
+        const section = document.querySelector(".exam-image-section");
+        section.style.display = "";
+      };
       function numberToWords(num){
         const ones=["","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve","thirteen","fourteen","fifteen","sixteen","seventeen","eighteen","nineteen"];
         const tens=["","","twenty","thirty","forty","fifty","sixty","seventy","eighty","ninety"];
@@ -335,6 +364,11 @@
         tbody.innerHTML="";
         recalculate();
       }
+      function setTodayDate(){
+        const invoiceDate=document.getElementById("invoiceDate");
+        invoiceDate.value=new Date().toISOString().split("T")[0];
+      }
+      setTodayDate();
       recalculate();
       window.addEventListener("keydown",e=>{
         if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="p"){
